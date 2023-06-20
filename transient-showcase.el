@@ -513,11 +513,9 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
 ;;;###autoload (autoload 'transient-showcase-snowcone-eater "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-snowcone-eater ()
   "Prefix demonstrating set & save infix persistence."
-
   ;; This prefix has a default value that transient-showcase-suffix-eat-snowcone can see
   ;; even before the prefix has been called.
   :value '("--topping=fruit" "--flavor=cherry")
-
   ;; always-read is used below so that you don't save nil values to history
   ["Arguments"
    ("-t" "topping" "--topping="
@@ -526,14 +524,18 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
    ("-f" "flavor" "--flavor="
     :choices ("grape" "orange" "cherry" "lime")
     :always-read t)]
-
   ;; Definitely check out the =C-x= menu
   ["C-x Menu Behaviors"
    ("S" "save snowcone settings"
-    (lambda () (interactive) (message "saved!") (transient-save)) :transient t)
+    (lambda ()
+      (interactive)
+      (message "saved!")
+      (transient-save)) :transient t)
    ("R" "reset snowcone settings"
-    (lambda () (interactive) (message "reset!") (transient-reset)) :transient t)]
-
+    (lambda ()
+      (interactive)
+      (message "reset!")
+      (transient-reset)) :transient t)]
   ["Actions"
    ("m" "message arguments" transient-showcase-suffix-print-args)
    ("e" "eat snowcone" transient-showcase-suffix-eat-snowcone)])
@@ -667,8 +669,8 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
 
 ;;;###autoload (autoload 'transient-showcase-lisp-variable "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-lisp-variable ()
-	"A prefix that updates and uses a Lisp variable."
-	["Location Printing"
+  "A prefix that updates and uses a Lisp variable."
+  ["Location Printing"
    [("p" "position" transient-showcase--pos-infix)]
    [("m" "message" transient-showcase--msg-pos)]])
 
@@ -760,17 +762,14 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
   ;; update your transient version if you experience #129 / #155
   :incompatible '(("--switch" "--value=")
                   ("--switch" "--toggle" "--flip")
-                  ("--argument=" "--value=" "--special-arg="))
-
+                  ("--argument " "--value=" "--special-arg="))
   ["Arguments"
    ("-s" "switch" "--switch")
    ("-t" "toggle" "--toggle")
    ("-f" "flip" "--flip")
-
-   ("-a" "argument" "--argument=")
+   ("-a" "argument" "--argument " :class transient-option)
    ("v" "value" "--value=")
    ("C-a" "special arg" "--special-arg=")]
-
   ["Show Args"
    ("s" "show arguments" transient-showcase-suffix-print-args)])
 
@@ -799,7 +798,7 @@ FLAG: request for metadata (which can be disrespected)"
   "Prefix with completions for choices."
   ["Arguments"
    ("-a" "Animal" "--animal="
-    :always-read t ; don't allow unsetting, just read a new value
+    :always-read t                ; don't allow unsetting, just read a new value
     :choices transient-showcase--animal-choices)]
   ["Show Args"
    ("s" "show arguments" transient-showcase-suffix-print-args)])
@@ -947,8 +946,8 @@ When this is called in layouts, it's the transient being layed out"
 
 ;;;###autoload (autoload 'transient-showcase-levels-and-visibility "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-levels-and-visibility ()
-	"Prefix with visibility levels for hiding rarely used commands."
-	[["Setting the Current Level"
+  "Prefix with visibility levels for hiding rarely used commands."
+  [["Setting the Current Level"
     ;; this binding is normally not displayed.  The value of
     ;; `transient-show-common-commands' controls this by default.
     ("C-x l" "set level" transient-set-level)
@@ -969,8 +968,8 @@ When this is called in layouts, it's the transient being layed out"
 
 ;;;###autoload (autoload 'transient-showcase-generated-child "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-generated-child ()
-	"Prefix that uses `setup-children' to generate single child."
-	["Replace this child"
+  "Prefix that uses `setup-children' to generate single child."
+  ["Replace this child"
    ;; Let's override the group's method
    :setup-children
    (lambda (_)													; we don't care about the stupid suffix
@@ -981,29 +980,29 @@ When this is called in layouts, it's the transient being layed out"
                                   (interactive)
                                   (message "okay!"))))))
    ("s" "haha stupid suffix" (lambda ()
-															 (interactive)
-															 (message "You should replace me!")))])
+                               (interactive)
+                               (message "You should replace me!")))])
 
 ;; (transient-showcase-generated-child)
 
 ;;;###autoload (autoload 'transient-showcase-generated-group "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-generated-group ()
-	"Prefix that uses `setup-children' to generate a group."
-	["Replace this child"
+  "Prefix that uses `setup-children' to generate a group."
+  ["Replace this child"
    ;; Let's override the group's method
    :setup-children
    (lambda (_args)
      (transient-parse-suffixes
       transient--prefix
       ["Group Name" ("r" "replacement" (lambda ()
-																				 (interactive)
-																				 (message "okay!")))]))])
+                                         (interactive)
+                                         (message "okay!")))]))])
 
 ;; (transient-showcase-generated-group)
 
 (defun transient-showcase--self-modifying-add-command (command-sym sequence)
-	"Add suffix with SEQUENCE and COMMAND-SYM to transient-showcase-self-modifying."
-	(interactive "CSelect a command: \nMkey sequence: ")
+  "Add suffix with SEQUENCE and COMMAND-SYM to transient-showcase-self-modifying."
+  (interactive "CSelect a command: \nMkey sequence: ")
   ;; Generate an infix that will call the command and add it to the
   ;; second group (index 1 at the 0th position)
   (transient-insert-suffix
@@ -1015,11 +1014,11 @@ When this is called in layouts, it's the transient being layed out"
 
 ;;;###autoload (autoload 'transient-showcase-self-modifying "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-self-modifying ()
-	"Prefix that uses `transient-insert-suffix' to add commands to itself."
-	[["Add New Commands"
-		("a" "add command" transient-showcase--self-modifying-add-command)]
+  "Prefix that uses `transient-insert-suffix' to add commands to itself."
+  [["Add New Commands"
+    ("a" "add command" transient-showcase--self-modifying-add-command)]
    ["User Defined"
-		""]]) ; blank line suffix creates an insertion point
+    ""]]) ; blank line suffix creates an insertion point
 
 ;; (transient-showcase-self-modifying)
 
@@ -1084,8 +1083,8 @@ PROMPT, INITIAL-INPUT, and HISTORY are forwarded to `read-from-minibuffer'."
 ;; serialization, we rehydrate it to be sure it's a valid value.
 ;; Remember to handle values you can't rehydrate.
 (cl-defmethod transient-init-value ((obj transient-showcase-child-infix))
-	"Set the `value' and `value-object' in OBJ slots using the prefix's value."
-	;; in the prefix declaration, the initial description is a reliable key
+  "Set the `value' and `value-object' in OBJ slots using the prefix's value."
+  ;; in the prefix declaration, the initial description is a reliable key
   (let ((variable (oref obj description)))
     (oset obj variable variable)
     ;; rehydrate the value if the prefix has one for this infix
@@ -1094,14 +1093,14 @@ PROMPT, INITIAL-INPUT, and HISTORY are forwarded to `read-from-minibuffer'."
                 ;;   (oref obj argument)))
                 (value (cdr (assoc variable prefix-value)))
                 (value-object (transient-get-suffix (oref transient--prefix
-																													command) value))) ; rehydrate
+                                                          command) value))) ; rehydrate
       (oset obj value value)
       (oset obj value-object value-object))))
 
 (cl-defmethod transient-infix-set ((obj transient-showcase-child-infix) value)
-	"Update `value' slot to VALUE.
+  "Update `value' slot to VALUE.
 Update OBJ slot to the value corresponding to VALUE."
-	(let* ((command (oref transient--prefix command))
+  (let* ((command (oref transient--prefix command))
          (child (ignore-errors (transient-get-suffix command value))))
     (oset obj value-object child)
     (oset obj value (if child value nil)))) ; TODO a bit ugly
@@ -1110,19 +1109,19 @@ Update OBJ slot to the value corresponding to VALUE."
 ;; this method.  The example here almost identical to the method
 ;; defined for `transient-option',
 (cl-defmethod transient-infix-value ((obj transient-showcase-child-infix))
-	"Return our actual value for OBJ rehydration later."
-	;; Note, returning a cons for the value is very flexible and will
+  "Return our actual value for OBJ rehydration later."
+  ;; Note, returning a cons for the value is very flexible and will
   ;; work with homoiconicity in persistence.
   (cons (oref obj variable)
-				(oref obj value)))
+        (oref obj value)))
 
 ;; Show user's a useful representation of your ugly value
 (cl-defmethod transient-format-value ((obj transient-showcase-child-infix))
-	"All transient children have some description we can display.
+  "All transient children have some description we can display.
 Show either the child's description from OBJ
  or a default if no child is selected."
-	(if-let* ((value (and (slot-boundp obj 'value)
-												(oref obj value)))
+  (if-let* ((value (and (slot-boundp obj 'value)
+                        (oref obj value)))
             (value-object (and (slot-boundp obj 'value-object)
                                (oref obj value-object))))
       (propertize
@@ -1194,13 +1193,13 @@ Show either the child's description from OBJ
 
 ;;;###autoload (autoload 'transient-showcase-inception-update "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-inception-update ()
-	"Prefix that picks and updates its own suffix."
-	[["Pick a suffix"
+  "Prefix that picks and updates its own suffix."
+  [["Pick a suffix"
     ("c" "child" transient-showcase--inception-child-infix :argument child)]
    ["Update the description!"
     ("-d" "description" "--description=") ; makes history value structure apparent
     ("u" "update" transient-showcase--inception-update-description :transient
-		 transient--do-exit)]
+     transient--do-exit)]
    ["Some suffixes"
     ("s" "wave surely" transient-showcase--wave-surely)
     ("d" "wave definitely" transient-showcase--wave-definitely)
@@ -1222,38 +1221,38 @@ Show either the child's description from OBJ
 
 ;;;###autoload (autoload 'transient-showcase "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase ()
-	"A launcher for a currated selection of examples.
+  "A launcher for a currated selection of examples.
 While most of the prefixes have their :transient slot set to t, it's not
 possible to return from all of them, especially if they demonstrate flow
 control such as replacing or exiting."
-	[["Layouts"
+  [["Layouts"
     ("ls" "stacked" transient-showcase-layout-stacked :transient t)
     ("lc" "columns" transient-showcase-layout-columns :transient t)
     ("lt" "stacked columns" transient-showcase-layout-stacked-columns :transient
-		 t)
+     t)
     ("lg" "grid" transient-showcase-layout-the-grid :transient t)
     ("lp" "spaced out" transient-showcase-layout-spaced-out :transient t)
     ("le" "explicit class" transient-showcase-layout-explicit-classes :transient
-		 t)
+     t)
     ("ld" "descriptions" transient-showcase-layout-descriptions :transient t)
     ;; padded description to sc
     ("lD" "dynamic descriptions        "
-		 transient-showcase-layout-dynamic-descriptions
+     transient-showcase-layout-dynamic-descriptions
      :transient t)]
    ["Nesting & Flow Control"
     ("fs" "stay transient" transient-showcase-stay-transient :transient t)
     ("fb" "binding sub-prefix" transient-showcase-simple-parent :transient t)
     ("fr" "sub-prefix with return" transient-showcase-simple-parent-with-return
-		 :transient t)
+     :transient t)
     ("fm" "manual setup in suffix" transient-showcase-parent-with-setup-suffix
-		 :transient t)
+     :transient t)
     ("fi" "mixing interactive" transient-showcase-interactive-basic :transient t)
     ("fe" "early return" transient-showcase-simple-messager :transient t)]]
   [["Managing State"                    ; padded right group
     ("sb" "a bunch of infixes" transient-showcase-basic-infixes :transient t)
     ("sc" "using scope (accepts prefix)" transient-showcase-scope :transient t)
     ("sn" "set & save / snowcones" transient-showcase-snowcone-eater :transient
-		 t)
+     t)
     ("sp" "history key / ping-pong" transient-showcase-ping :transient t)
     ("sg" "always forget / goldfish" transient-showcase-goldfish :transient t)
     ("se" "always remember / elephant" transient-showcase-elephant :transient t)
@@ -1262,14 +1261,14 @@ control such as replacing or exiting."
     ("sl" "lisp variables" transient-showcase-lisp-variable :transient t)]
    ["CLI arguments"
     ("cb" "basic arguments" transient-showcase-switches-and-arguments :transient
-		 t)
+     t)
     ("cm" "random-init infix" transient-showcase-maybe-on :transient t)
     ("cc" "basic choices" transient-showcase-animal-choices :transient t)
     ("ce" "exclusive switches" transient-showcase-exclusive-switches :transient
-		 t)
+     t)
     ("ci" "incompatible switches" transient-showcase-incompatible :transient t)
     ("co" "completions for choices" transient-showcase-choices-with-completions
-		 :transient t)
+     :transient t)
     ("cx" "cowsay cli wrapper" transient-showcase-cowsay :transient t)]]
   [["Visibility"
     ;; padded description to sc
@@ -1279,10 +1278,10 @@ control such as replacing or exiting."
    ["Advanced"
     ("ac" "generated child" transient-showcase-generated-child :transient t)
     ("ag" "generated group" transient-showcase-generated-group :transient t)
-		("as" "self-modifying" transient-showcase-self-modifying :transient t)
+    ("as" "self-modifying" transient-showcase-self-modifying :transient t)
     ("ai" "custom infixes" transient-showcase-inception :transient t)
     ("au" "custom infixes & updaxte" transient-showcase-inception-update
-		 :transient t)]])
+     :transient t)]])
 
 (provide 'transient-showcase)
 ;;; transient-showcase.el ends here
