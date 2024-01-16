@@ -775,7 +775,7 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
 
 ;; (transient-showcase-incompatible)
 
-(defun transient-showcase--animal-choices (_complete-me _predicate flag)
+(defun transient-showcase--animal-completion-table (_complete-me _predicate flag)
   "Programmed completion for animal choice.
 _COMPLETE-ME: whatever the user has typed so far
 _PREDICATE: function you should use to filter candidates (only nil seen so far)
@@ -792,6 +792,9 @@ FLAG: request for metadata (which can be disrespected)"
     (if (eq 0 (random 2))
         '("fox" "kitten" "otter")
       '("ant" "peregrine" "zebra"))))
+
+(defun transient-showcase--animal-choices ()
+  #'transient-showcase--animal-completion-table)
 
 ;;;###autoload (autoload 'transient-showcase-choices-with-completions "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-choices-with-completions ()
