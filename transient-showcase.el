@@ -49,9 +49,11 @@
   (message "Waves at the user at: %s." (current-time-string)))
 
 
-(defvar transient-showcase-busy nil "Are we busy?")
+(defvar transient-showcase-busy nil
+  "Flag indicating if transient showcase is currently active.")
 
-(defun transient-showcase--busy-p () "Are we busy?" transient-showcase-busy)
+(defun transient-showcase--busy-p ()
+  "Check if `transient-showcase' is currently busy."transient-showcase-busy)
 
 (transient-define-suffix transient-showcase--toggle-busy ()
   "Toggle busy."
@@ -555,10 +557,8 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
 
 ;;;###autoload (autoload 'transient-showcase-ping "transient-showcase.el" nil t)
 (transient-define-prefix transient-showcase-ping ()
-  "Prefix demonstrating history sharing."
-
+  "Define a transient prefix for showcasing ping commands and options."
   :history-key 'non-unique-name
-
   ["Ping"
    ("-g" "game" "--game=")
    ("p" "ping the pong" transient-showcase-pong)
@@ -684,14 +684,15 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
     ("-a" "argument" "--argument=")
     ("t" "toggle" "--toggle")
     ("v" "value" "--value=")]
-
    ["More Arguments"
     ("-f" "argument with forced class" "--forced-class " :class transient-option)
-    ("I" "argument with inline" ("-i" "--inline-shortarg="))
+    ("I" "argument with inline" "--inline-shortarg "
+     :class transient-option
+     :multi-value t
+     :choices ("fox" "kitten" "peregrine" "otter"))
     ("S" "inline shortarg switch" ("-n" "--inline-shortarg-switch"))]]
-
   ["Commands"
-   ("w" "wave some" transient-showcase-wave)
+   ("w" "wave some" transient-showcase--random-init-infix)
    ("s" "show arguments" transient-showcase-suffix-print-args)]) ; use to analyze the switch values
 
 ;; (transient-showcase-switches-and-arguments)
@@ -722,7 +723,7 @@ This command can be called from it's parent, `transient-showcase-snowcone-eater'
 (transient-define-argument transient-showcase--animals-argument ()
   "Animal picker."
   :argument "--animals="
-  ; :multi-value t ; multi-value can be set to --animals=fox,otter,kitten etc
+  :multi-value t      ; multi-value can be set to --animals=fox,otter,kitten etc
   :class 'transient-option
   :choices '("fox" "kitten" "peregrine" "otter"))
 
@@ -975,10 +976,10 @@ When this is called in layouts, it's the transient being layed out"
   ["Replace this child"
    ;; Let's override the group's method
    :setup-children
-   (lambda (_)													; we don't care about the stupid suffix
+   (lambda (_)                          ; we don't care about the stupid suffix
      ;; remember to return a list
      (list (transient-parse-suffix
-            transient--prefix
+            (oref transient--prefix command)
             '("r" "replacement" (lambda ()
                                   (interactive)
                                   (message "okay!"))))))
@@ -996,7 +997,7 @@ When this is called in layouts, it's the transient being layed out"
    :setup-children
    (lambda (_args)
      (transient-parse-suffixes
-      transient--prefix
+      (oref transient--prefix command)
       ["Group Name" ("r" "replacement" (lambda ()
                                          (interactive)
                                          (message "okay!")))]))])
