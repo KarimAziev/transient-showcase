@@ -1000,7 +1000,8 @@ When this is called in layouts, it's the transient being layed out"
       (oref transient--prefix command)
       ["Group Name" ("r" "replacement" (lambda ()
                                          (interactive)
-                                         (message "okay!")))]))])
+                                         (message "okay!")))]))
+   :class transient-column])
 
 ;; (transient-showcase-generated-group)
 
