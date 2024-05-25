@@ -1132,7 +1132,7 @@ Show either the child's description from OBJ
       (propertize
        (format "(%s)" (transient-showcase--layout-child-desc value-object))
        'face 'transient-value)
-    (propertize "¯\_(ツ)_/¯" 'face 'transient-inactive-value)))
+    (propertize "¯\\_(ツ)_/¯" 'face 'transient-inactive-value)))
 
 ;; Now that we have our class defined, we can create an infix the usual
 ;; way, just specifying our class
